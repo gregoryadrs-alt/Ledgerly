@@ -1,4 +1,4 @@
-# AI Financial Copilot (Telegram Bot + n8n + Web Dashboard)
+# Ledgerly - AI Financial Copilot (Telegram Bot + n8n + Web Dashboard)
 
 An intelligent, modular personal finance ecosystem powered by **n8n**, **Google Gemini**, **Supabase (PostgreSQL)**, **Google Sheets**, and **Next.js 14**. It automates multi-modal expense tracking, voice/receipt ingestion, dual-database logging, dynamic web analytics sync, and delivers automated scheduled financial health reports directly to your Telegram.
 
@@ -75,14 +75,29 @@ flowchart LR
     Realtime -->|3. Live State Push| WebApp[" Next.js 14 Web Dashboard"]
 ```
 
+### 4. Project Structure 
+```
+Ledgerly/
+├── Workflows/          # n8n workflow JSON files (AI logic & routing)
+├── docker-compose.yaml # n8n container orchestration (Port 5678)
+├── .env.example        # Environment variables template
+├── README.md           # Project documentation
+└── expense-tracker/    # Next.js 14 Web Dashboard (Frontend)
+```
 
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
 * Docker & Docker Compose installed on your system
-* Telegram Bot Token from [@BotFather](https://t.me/BotFather)
+
+* Node.js (v18+) & npm installed
+
+* Telegram Bot Token from @BotFather
+
 * Google Gemini API Key
+
 * Google Cloud Console Service Account (with Google Sheets API enabled)
+
 * Supabase Project URL & Service Role / Anon Keys
 
 ---
@@ -91,8 +106,8 @@ flowchart LR
 Clone the repository and set up your environment variables:
 
 ```bash
-git clone [https://github.com/gregoryadrs-alt/Fintrack-Agent.git](https://github.com/gregoryadrs-alt/Fintrack-Agent.git)
-cd Fintrack-Agent
+git clone [https://github.com/gregoryadrs-alt/Ledgerly.git](https://github.com/gregoryadrs-alt/Ledgerly.git)
+cd Ledgerly
 cp .env.example .env
 ```
 Open .env and fill in your actual credentials, chat ID, and public webhook URL.
@@ -136,7 +151,7 @@ budgets (Monthly Target Limits): Headers: category, monthly_limit.
 ### 4. Run n8n Instance
 Launch your self-hosted n8n container:
 ```bash
-docker compose up -d
+docker compose up 
 ```
 
 
@@ -162,3 +177,11 @@ Set the webhook URL on your Telegram bot trigger.
 Toggle all workflows to Active / Published!
 
 
+### 6. Run Web Dashboard (expense-tracker/ Directory)
+To launch the interactive Next.js web dashboard:
+```bash
+cd expense-tracker
+npm install
+npm run dev
+
+Open http://localhost:3000 in your browser to view your live financial dashboard.
