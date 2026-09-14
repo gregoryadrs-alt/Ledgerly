@@ -1,4 +1,4 @@
-#  Ledgerly — Personal Financial Dashboard
+# Ledgerly — Personal Financial Dashboard
 
 Ledgerly is a modern, web-based personal finance management application built with **Next.js 14**, **Tailwind CSS**, and real-time backend synchronization via **Supabase Database**. It allows users to track daily transactions, manage savings targets (*Savings Goals*), monitor category budgets, and analyze overall financial health through interactive visualizations.
 

@@ -95,10 +95,7 @@ git clone [https://github.com/gregoryadrs-alt/Fintrack-Agent.git](https://github
 cd Fintrack-Agent
 cp .env.example .env
 ```
-
 Open .env and fill in your actual credentials, chat ID, and public webhook URL.
-
----
 
 3. Database Setup
 
@@ -144,7 +141,7 @@ docker compose up -d
 
 
 ### 5. Import Workflows
-Open the n8n web dashboard at http://localhost:5555.
+Open the n8n web dashboard at http://localhost:5555. Expose the port 5555 (Using ngrok)
 
 Import all JSON workflows from the workflows/ directory:
 

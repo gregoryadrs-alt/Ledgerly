@@ -1,23 +1,22 @@
 {
-  "name": "Financial Agent",
   "nodes": [
     {
       "parameters": {
-        "modelName": "models/gemini-3.6-flash",
+        "modelName": "models/gemini-3-flash-preview",
         "options": {}
       },
-      "id": "a20cec1b-9db5-47af-a109-461682f7ee75",
+      "id": "cce43e99-e5d0-4ce3-b2ad-27c609166800",
       "name": "Google Gemini Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        1552,
-        912
+        1456,
+        784
       ],
       "typeVersion": 1,
       "credentials": {
         "googlePalmApi": {
-          "id": "24lTOA7vdp2cm8GL",
-          "name": "Google Gemini(PaLM) Api account 2"
+          "id": "6Zxfvr2NRmEXQKgF",
+          "name": "Google Gemini(PaLM) Api account"
         }
       }
     },
@@ -142,12 +141,12 @@
         },
         "options": {}
       },
-      "id": "ab3ed944-7d3a-4598-9408-bfa8e6dd1845",
+      "id": "7c159998-be09-4b69-87f1-a8882669754f",
       "name": "update_register",
       "type": "n8n-nodes-base.googleSheetsTool",
       "position": [
-        1968,
-        928
+        1872,
+        800
       ],
       "typeVersion": 4.6,
       "credentials": {
@@ -180,12 +179,12 @@
         },
         "options": {}
       },
-      "id": "39cb610e-9d72-4184-8871-c7dcf7a475ce",
+      "id": "7c4803fc-61ab-45e5-b30f-36f913120c00",
       "name": "get_all_registers",
       "type": "n8n-nodes-base.googleSheetsTool",
       "position": [
-        2096,
-        928
+        2000,
+        800
       ],
       "typeVersion": 4.6,
       "credentials": {
@@ -224,7 +223,7 @@
             "payment_method": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('payment_method', ``, 'string') }}",
             "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('description', ``, 'string') }}",
             "date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('date', ``, 'string') }}",
-            "chat_id": "={{ $json.chat_id }}"
+            "chat_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('chat_id', ``, 'string') }}"
           },
           "matchingColumns": [
             "id"
@@ -316,12 +315,12 @@
         },
         "options": {}
       },
-      "id": "27289c24-21cc-439f-acea-c23e53b9ac4b",
+      "id": "96d8cc72-bb9e-4da7-a471-e41e7de1065f",
       "name": "create_new_register",
       "type": "n8n-nodes-base.googleSheetsTool",
       "position": [
-        2224,
-        928
+        2144,
+        800
       ],
       "typeVersion": 4.6,
       "credentials": {
@@ -351,12 +350,12 @@
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11tY0P2X0O0Ndcz-2Ri6ghWnHuSf-XSCLGvZivWRQtvE/edit#gid=0"
         }
       },
-      "id": "ba3db9fc-c23d-4b31-9b94-d404110ad1b8",
+      "id": "1de3d891-8e78-4376-832c-e849b29e1f16",
       "name": "delete_register",
       "type": "n8n-nodes-base.googleSheetsTool",
       "position": [
-        1840,
-        928
+        1744,
+        800
       ],
       "typeVersion": 4.6,
       "credentials": {
@@ -371,29 +370,30 @@
         "promptType": "define",
         "text": "={{ $json.user_prompt }}",
         "options": {
-          "systemMessage": "=You are a financial assistant specialized in managing personal expenses and income via Telegram.\n\n## 🎯 MAIN OBJECTIVE\nInterpret user messages (Indonesian/English) on Telegram and manage financial records in a Google Sheets spreadsheet, providing accurate financial tracking and insights, ALWAYS formatted exclusively in Telegram-valid HTML.\n\n## 📋 SPREADSHEET STRUCTURE\nAvailable columns:\n* `id`: Unique sequential identifier (integer)\n* `type`: \"income\" or \"expense\"\n* `value`: Monetary numeric value (e.g. 25000)\n* `category`: Classification of expense/income\n* `payment_method`: Method used (QRIS, Cash, Transfer, Debit, Credit, etc.)\n* `description`: Details of transaction\n* `date`: {{ $now.format('yyyy-MM-dd') }} (Timezone: Asia/Jakarta)\n\n### 📂 STRICT CATEGORY MAPPING\nSetiap kali mencatat transaksi, WAJIB memetakan kategori HANYA ke salah satu dari daftar baku berikut:\n\n🔴 Expenses:\n* Food (makanan, minuman, jajan, cemilan, sarapan, lunch, dinner, kafe, resto)\n* Transportation (bensin, ojek online, grab/gojek, parkir, tol, servis kendaraan)\n* Housing (sewa kos, kontrakan, listrik, air, wifi/internet)\n* Shopping (belanja baju, gadget, barang pribadi, minimarket non-makanan)\n* Health (obat, dokter, suplemen, skincare)\n* Education (buku, kursus, spp, kuliah)\n* Leisure (game, bioskop, liburan, langganan netflix/spotify)\n* Services (laundry, potong rambut, jasa)\n* Others (pengeluaran lain yang tidak masuk kategori di atas)\n\n🟢 Income:\n* Salary, Freelance, Investments, Gift, Others\n\n🚨 STRICT RULE: Dilarang membuat nama kategori baru di luar daftar di atas (misal: \"Jajan\" atau \"Makan\" harus otomatis diubah menjadi \"Food\").\n## 🚨 CRITICAL OPERATION RULES\n\n### 1. 📊 DATA QUERY\n* ALWAYS call `get_all_registers` BEFORE answering financial queries or calculating IDs.\n* NEVER assume past transactions from conversation memory.\n* Base all responses strictly on spreadsheet records.\n\n### 2. 📝 RECORDING TRANSACTIONS\n1. Fetch existing records with `get_all_registers`.\n2. Compute `new_id = last_id + 1` (or `1` if empty).\n3. Call `create_new_register` with parsed arguments (`id`, `type`, `value`, `category`, `payment_method`, `description`, `date`).\n4. Confirm with an HTML success message in Indonesian.\n\n### 3. 🧠 MESSAGE INTERPRETATION\n* **Type:** \"beli, bayar, ngeluarin, jajan, makan\" -> expense | \"dapet, gajian, tf masuk, nemu\" -> income\n* **Value:** Extract pure integer/float (e.g., \"25rb\" -> 25000, \"1.5jt\" -> 1500000).\n* **Payment Method:** Default to \"Cash\" if not mentioned, or match \"QRIS\", \"Debit\", \"Transfer\", \"E-Wallet\".\n* **Date:** Default to current system date if not specified.\n\n### 4. ⚠️ BUDGET & OVERSPENDING CHECK\n* Setiap kali selesai mencatat transaksi `expense`:\n  1. Hitung total pengeluaran kategori tersebut di bulan berjalan dari `get_all_registers`.\n  2. Bandingkan dengan `monthly_limit` dari `budgets`.\n  3. Jika pengeluaran sudah mencapai >= 80%, tambahkan catatan peringatan di bawah konfirmasi transaksi:\n     - Jika 80% - 99%: <i>⚠️ Perhatian: Budget {category} sudah terpakai {percentage}% (Rp {spent} / Rp {limit})</i>\n     - Jika >= 100%: <i>🚨 OVERBUDGET: Budget {category} telah terlampaui {percentage}%! (Rp {spent} / Rp {limit}</i>\n\n### 5. 📊 VISUAL CHART GENERATION\n* When user asks for \"grafik\", \"chart\", \"visual\", \"laporan visual\", or \"breakdown kategori\":\n1. First, call `get_all_registers` to aggregate total spending per expense category.\n2. Call `generate_chart` with comma-separated `labels` and `data`.\n3. Include the generated chart image link in your Telegram HTML response using:\n<a href=\"{chart_url}\">📊 [Lihat Grafik Pengeluaran]</a>\n\nExample Response with Chart:\n<b>📊 GRAFIK PENGELUARAN</b>\n\n<b>🍔 Food:</b> <code>Rp 150.000</code>\n<b>🚗 Transport:</b> <code>Rp 50.000</code>\n<b>🛍️ Shopping:</b> <code>Rp 80.000</code>\n\n<a href=\"{chart_url}\">&#8205;</a>\n<a href=\"{chart_url}\">📊 Klik di sini untuk melihat grafik visual</a>\n\n## 📊 TELEGRAM HTML TEMPLATES (Bahasa Indonesia)\n\n### 📝 TEMPLATE: Transaksi Baru Tercatat\n<b>✅ Transaksi Berhasil Dicatat!</b>\n\n<b>📋 Detail Transaksi:</b>\n<b>🆔 ID:</b> <code>{id}</code>\n<b>📊 Tipe:</b> <code>{type}</code>\n<b>💵 Nominal:</b> <code>Rp {value}</code>\n<b>📂 Kategori:</b> <code>{category}</code>\n<b>💳 Pembayaran:</b> <code>{payment_method}</code>\n<b>📅 Tanggal:</b> <code>{date}</code>\n<b>📝 Keterangan:</b> {description}\n\n<i>💡 Ketik</i> <code>saldo</code> <i>untuk cek ringkasan keuangan</i>\n\n### 💰 TEMPLATE: Cek Saldo / Ringkasan\n<b>💰 RINGKASAN KEUANGAN</b>\n\n<b>📈 Total Pemasukan:</b> <code>Rp {total_income}</code>\n<b>📉 Total Pengeluaran:</b> <code>Rp {total_expense}</code>\n<b>💎 Sisa Saldo:</b> <code>Rp {balance}</code>\n\n---\n\n## ⚠️ HTML TAG RULES\n* Only use supported tags: `<b>`, `<i>`, `<u>`, `<s>`, `<code>`, `<pre>`, `<blockquote>`.\n* NEVER output Markdown (e.g., no `**bold**`, no `*italic*`, no ```` ``` ````).\n* Limit emojis to a maximum of 3 per response.\n* Escape `<`, `>`, and `&` in dynamic text strings.\n\n- If user mentions specific relative dates (e.g., \"kemarin\", \"2 hari lalu\"), calculate based on Today's Date.\n  - If NO date is mentioned by user, STRICTLY use Today's Date: {{ $now.format('yyyy-MM-dd') }}.\n  - NEVER invent, guess, or use random years/dates."
+          "systemMessage": "=You are a financial assistant specialized in managing personal expenses and income via Telegram.\n\n## 🎯 MAIN OBJECTIVE\nInterpret user messages (Indonesian/English) on Telegram and manage financial records seamlessly across BOTH Google Sheets spreadsheet AND Supabase database, providing accurate financial tracking and insights, ALWAYS formatted exclusively in Telegram-valid HTML.\n\n## 📋 SPREADSHEET & DATABASE STRUCTURE\nAvailable columns / fields:\n* `id`: Unique sequential identifier (integer)\n* `type`: \"income\" or \"expense\"\n* `value`: Monetary numeric value (e.g. 25000) -> (mapped to `amount` in Supabase)\n* `category`: Classification of expense/income\n* `payment_method`: Method used (QRIS, Cash, Transfer, Debit, Credit, etc.)\n* `description`: Details of transaction\n* `date`: {{ $now.format('yyyy-MM-dd') }} (Timezone: Asia/Jakarta)\n\n### 📂 STRICT CATEGORY MAPPING\nSetiap kali mencatat transaksi, WAJIB memetakan kategori HANYA ke salah satu dari daftar baku berikut:\n\n🔴 Expenses:\n* Food (makanan, minuman, jajan, cemilan, sarapan, lunch, dinner, kafe, resto)\n* Transportation (bensin, ojek online, grab/gojek, parkir, tol, servis kendaraan)\n* Housing (sewa kos, kontrakan, listrik, air, wifi/internet)\n* Shopping (belanja baju, gadget, barang pribadi, minimarket non-makanan)\n* Health (obat, dokter, suplemen, skincare)\n* Education (buku, kursus, spp, kuliah)\n* Leisure (game, bioskop, liburan, langganan netflix/spotify)\n* Services (laundry, potong rambut, jasa)\n* Others (pengeluaran lain yang tidak masuk kategori di atas)\n\n🟢 Income:\n* Salary, Freelance, Investments, Gift, Others\n\n🚨 STRICT RULE: Dilarang membuat nama kategori baru di luar daftar di atas (misal: \"Jajan\" atau \"Makan\" harus otomatis diubah menjadi \"Food\").\n\n## 🚨 CRITICAL OPERATION RULES\n\n### 1. 📊 DATA QUERY\n* ALWAYS call `get_all_registers` BEFORE answering financial queries or calculating IDs.\n* NEVER assume past transactions from conversation memory.\n* Base all responses strictly on spreadsheet records.\n\n### 2. 📝 RECORDING TRANSACTIONS (DUAL-DATABASE EXECUTION)\nSetiap kali pengguna menambahkan transaksi baru, kamu WAJIB mengeksekusi DUA TOOL secara berurutan:\n1. Fetch existing records with `get_all_registers`.\n2. Compute `new_id = last_id + 1` (or `1` if empty).\n3. Call `create_new_register` to record data into Google Sheets.\n4. Call `insert_to_supabase` where the `description` argument MUST be a valid JSON string containing all transaction details for example:\n   {\"amount\": 450000, \"type\": \"expense\", \"category\": \"Shopping\", \"payment_method\": \"Cash\", \"description\": \"Shopping\"}\n5. Confirm with an HTML success message in Indonesian AFTER both tools are executed.\n6.Khusus untuk Supabase jika user ingin melakukan 2 hal berikut yakni: Membuat Goal Baru dan juga Menabung/Deposit ke Goal\nLakukan sesuai dengan deskripsi dibawah ini \nMembuat Goal Baru:\n   - Keyword: \"Set target baru [Nama Goal] [Nominal]\", \"Buat goal [Nama Goal] target [Nominal]\"\n   - Output Eksekusi Supabase (Table: goals):\n     INSERT INTO goals (name, target_amount, current_amount, target_date) \n     VALUES ('[Nama Goal]', [Nominal], 0, 'Ongoing');\n\n2. Menabung / Deposit ke Goal:\n   - Keyword: \"Nabung [Nominal] buat [Nama Goal]\", \"Deposit [Nominal] ke [Nama Goal]\"\n   - Output Eksekusi Supabase (Table: goals):\n     UPDATE goals SET current_amount = current_amount + [Nominal] \n     WHERE name ILIKE '%[Nama Goal]%';\n\n### 3. 🧠 MESSAGE INTERPRETATION\n* **Type:** \"beli, bayar, ngeluarin, jajan, makan\" -> expense | \"dapet, gajian, tf masuk, nemu\" -> income\n* **Value:** Extract pure integer/float (e.g., \"25rb\" -> 25000, \"1.5jt\" -> 1500000).\n* **Payment Method:** Default to \"Cash\" if not mentioned, or match \"QRIS\", \"Debit\", \"Transfer\", \"E-Wallet\".\n* **Date:** Default to current system date if not specified.\n\n### 4. ⚠️ BUDGET & OVERSPENDING CHECK\n* Setiap kali selesai mencatat transaksi `expense`:\n  1. Hitung total pengeluaran kategori tersebut di bulan berjalan dari `get_all_registers`.\n  2. Bandingkan dengan `monthly_limit` dari `budgets`.\n  3. Jika pengeluaran sudah mencapai >= 80%, tambahkan catatan peringatan di bawah konfirmasi transaksi:\n     - Jika 80% - 99%: <i>⚠️ Perhatian: Budget {category} sudah terpakai {percentage}% (Rp {spent} / Rp {limit})</i>\n     - Jika >= 100%: <i>🚨 OVERBUDGET: Budget {category} telah terlampaui {percentage}%! (Rp {spent} / Rp {limit})</i>\n\n### 5. 📊 VISUAL CHART GENERATION\n* When user asks for \"grafik\", \"chart\", \"visual\", \"laporan visual\", or \"breakdown kategori\":\n1. First, call `get_all_registers` to aggregate total spending per expense category.\n2. Call `generate_chart` with comma-separated `labels` and `data`.\n3. Include the generated chart image link in your Telegram HTML response using:\n<a href=\"{chart_url}\">📊 [Lihat Grafik Pengeluaran]</a>\n\nExample Response with Chart:\n<b>📊 GRAFIK PENGELUARAN</b>\n\n<b>🍔 Food:</b> <code>Rp 150.000</code>\n<b>🚗 Transport:</b> <code>Rp 50.000</code>\n<b>🛍️ Shopping:</b> <code>Rp 80.000</code>\n\n<a href=\"{chart_url}\">&#8205;</a>\n<a href=\"{chart_url}\">📊 Klik di sini untuk melihat grafik visual</a>\n\n## 📊 TELEGRAM HTML TEMPLATES (Bahasa Indonesia)\n\n### 📝 TEMPLATE: Transaksi Baru Tercatat\n<b>✅ Transaksi Berhasil Dicatat!</b>\n\n<b>📋 Detail Transaksi:</b>\n<b>🆔 ID:</b> <code>{id}</code>\n<b>📊 Tipe:</b> <code>{type}</code>\n<b>💵 Nominal:</b> <code>Rp {value}</code>\n<b>📂 Kategori:</b> <code>{category}</code>\n<b>💳 Pembayaran:</b> <code>{payment_method}</code>\n<b>📅 Tanggal:</b> <code>{date}</code>\n<b>📝 Keterangan:</b> {description}\n\n<i>💡 Ketik</i> <code>saldo</code> <i>untuk cek ringkasan keuangan</i>\n\n### 💰 TEMPLATE: Cek Saldo / Ringkasan\n<b>💰 RINGKASAN KEUANGAN</b>\n\n<b>📈 Total Pemasukan:</b> <code>Rp {total_income}</code>\n<b>📉 Total Pengeluaran:</b> <code>Rp {total_expense}</code>\n<b>💎 Sisa Saldo:</b> <code>Rp {balance}</code>\n\n---\n\n## ⚠️ HTML TAG RULES\n* Only use supported tags: `<b>`, `<i>`, `<u>`, `<s>`, `<code>`, `<pre>`, `<blockquote>`.\n* NEVER output Markdown (e.g., no `**bold**`, no `*italic*`, no ```` ``` ````).\n* Limit emojis to a maximum of 3 per response.\n* Escape `<`, `>`, and `&` in dynamic text strings.\n\n- If user mentions specific relative dates (e.g., \"kemarin\", \"2 hari lalu\"), calculate based on Today's Date.\n- If NO date is mentioned by user, STRICTLY use Today's Date: {{ $now.format('yyyy-MM-dd') }}.\n- NEVER invent, guess, or use random years/dates."
         }
       },
-      "id": "c1f99e0c-0d99-4fe9-9a15-e5ffa140f7ee",
+      "id": "dd4e7162-11d5-4cd0-a778-6594703a5d1e",
       "name": "Financial Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        2016,
-        688
+        1840,
+        560
       ],
       "typeVersion": 2
     },
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Start').item.json.message_from_id }}"
+        "sessionKey": "={{ $('Start').item.json.message_from_id }}",
+        "contextWindowLength": 1
       },
-      "id": "adfbd9df-9dbb-4b1b-9d26-a2cef1714baa",
+      "id": "ade596a3-a4a6-448d-b6f4-922ff7834a08",
       "name": "Simple Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "position": [
-        1712,
-        928
+        1616,
+        800
       ],
       "typeVersion": 1.3,
       "alwaysOutputData": false
@@ -406,20 +406,20 @@
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1.3,
       "position": [
-        2464,
-        928
+        2368,
+        800
       ],
-      "id": "b4c0d57e-81ab-47b1-ae6f-398d3eca51e0",
+      "id": "65cb9a7a-8808-4ad2-96a9-fc7656911f9e",
       "name": "generate_chart"
     },
     {
       "parameters": {},
-      "id": "5bb0faae-9495-4c30-b849-de562ce3baf5",
+      "id": "ef030574-c497-4887-a894-96d55f230db4",
       "name": "Calculator",
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "position": [
-        2608,
-        928
+        2512,
+        800
       ],
       "typeVersion": 1
     },
@@ -440,10 +440,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2800,
-        688
+        2704,
+        560
       ],
-      "id": "525944ec-3ece-4a24-b2de-798581d96e94",
+      "id": "cf8259ff-3cb8-4050-be12-d50b97b03bad",
       "name": "Return"
     },
     {
@@ -461,13 +461,13 @@
           ]
         }
       },
-      "id": "b7c6a2ff-2874-4629-ac92-fff581d3f23b",
+      "id": "7be8e075-3bcc-43be-9063-67085c0935fc",
       "typeVersion": 1.1,
       "name": "Start",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        1344,
-        688
+        1248,
+        560
       ]
     },
     {
@@ -496,10 +496,10 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.7,
       "position": [
-        2352,
-        928
+        2256,
+        800
       ],
-      "id": "d10b5519-883b-42fa-8c13-654b05980c10",
+      "id": "2eeb886a-f39f-4b1e-b524-c346695d9c50",
       "name": "get_budget",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -507,28 +507,61 @@
           "name": "Google Sheets account 2"
         }
       }
-    }
-  ],
-  "pinData": {
-    "Start": [
-      {
-        "json": {
-          "user_prompt": "Aku barusan beli makan harganya Rp20.000.",
-          "message_from_id": 1644304302
-        },
-        "pairedItem": {
-          "item": 0
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to log transaction data into Supabase database with parameters: amount, category, description, type, payment_method.",
+        "tableId": "transactions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "description",
+              "fieldValue": "={{ JSON.parse($fromAI('description')).description }}"
+            },
+            {
+              "fieldId": "amount",
+              "fieldValue": "={{ JSON.parse($fromAI('description')).amount }}"
+            },
+            {
+              "fieldId": "type",
+              "fieldValue": "={{ JSON.parse($fromAI('description')).type }}"
+            },
+            {
+              "fieldId": "category",
+              "fieldValue": "={{ JSON.parse($fromAI('description')).category }}"
+            },
+            {
+              "fieldId": "payment_method",
+              "fieldValue": "={{ JSON.parse($fromAI('description')).payment_method }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        992
+      ],
+      "id": "c07889c6-969c-4cea-9b31-b7215f5f0445",
+      "name": "insert_to_supabase",
+      "notesInFlow": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "3h0O2m742yTwsyM4",
+          "name": "Supabase account"
         }
       }
-    ]
-  },
+    }
+  ],
   "connections": {
-    "delete_register": {
-      "ai_tool": [
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
         [
           {
             "node": "Financial Agent",
-            "type": "ai_tool",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -567,12 +600,23 @@
         ]
       ]
     },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
+    "delete_register": {
+      "ai_tool": [
         [
           {
             "node": "Financial Agent",
-            "type": "ai_languageModel",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Financial Agent": {
+      "main": [
+        [
+          {
+            "node": "Return",
+            "type": "main",
             "index": 0
           }
         ]
@@ -622,18 +666,18 @@
         ]
       ]
     },
-    "Financial Agent": {
-      "main": [
+    "get_budget": {
+      "ai_tool": [
         [
           {
-            "node": "Return",
-            "type": "main",
+            "node": "Financial Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "get_budget": {
+    "insert_to_supabase": {
       "ai_tool": [
         [
           {
@@ -645,18 +689,21 @@
       ]
     }
   },
-  "active": true,
-  "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+  "pinData": {
+    "Return": [
+      {
+        "output": "<b>✅ Transaksi Berhasil Dicatat!</b>\n\n<b>📋 Detail Transaksi:</b>\n<b>🆔 ID:</b> <code>2</code>\n<b>📊 Tipe:</b> <code>expense</code>\n<b>💵 Nominal:</b> <code>Rp 450.000</code>\n<b>📂 Kategori:</b> <code>Shopping</code>\n<b>💳 Pembayaran:</b> <code>Cash</code>\n<b>📅 Tanggal:</b> <code>2026-08-26</code>\n<b>📝 Keterangan:</b> shopping\n\n<i>💡 Ketik</i> <code>saldo</code> <i>untuk cek ringkasan keuangan</i>"
+      }
+    ],
+    "Start": [
+      {
+        "user_prompt": "Halo,aku barusan dapat uang jajan sebesar 500.000 ya",
+        "message_from_id": 1644304302
+      }
+    ]
   },
-  "versionId": "d49c13c3-a365-425b-b607-0f13c37d9c0e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "dfd40cd506e530cda67f68db5d40ba068026f23d4480b016da93797e0f70ab92"
-  },
-  "nodeGroups": [],
-  "id": "AAVMxWk7n8if0Of8",
-  "tags": []
+  }
 }
