@@ -186,7 +186,7 @@ npm run dev
 
 Open http://localhost:3000 in your browser to view your live financial dashboard.
 ```
-
+<img width="618" height="503" alt="SS LEDGERLY4" src="https://github.com/user-attachments/assets/e0ef180d-0565-4b55-aeb1-a8c8b81b728b" />
 <img width="872" height="421" alt="image" src="https://github.com/user-attachments/assets/5fcc2b3d-92d9-4c5e-920e-27d94c706403" />
 <img width="1366" height="683" alt="ss ledgerly" src="https://github.com/user-attachments/assets/f5472937-d2d3-4c97-bff2-8da561c6ea42" />
 <img width="1366" height="671" alt="ss ledgerly2" src="https://github.com/user-attachments/assets/4984a29a-de0a-4e9f-84e0-dd2268e5ed9c" />
